@@ -10,24 +10,29 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
+            background-image: url("");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         header {
-            background-color: #0066ff;
+            background-color: #ffffff;
             color: white;
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
+        .logo img {
+            width: 100px; /* Ajustar el tamaño según sea necesario */
+            height: auto;
         }
         nav ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
             display: flex;
+            justify-content: center; /* Centrar horizontalmente */
         }
         nav ul li {
             margin-right: 20px;
@@ -36,25 +41,52 @@
             margin-right: 0;
         }
         nav ul li a {
-            color: white;
+            color: rgb(0, 0, 0);
             text-decoration: none;
             font-size: 16px;
+        }
+        .user-login {
+            display: flex;
+            align-items: center;
+        }
+        .user-login img {
+            width: 30px; /* Ajustar el tamaño según sea necesario */
+            height: auto;
+            margin-right: 10px;
+        }
+        .btn-login {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #00ff00; /* Borde verde */
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">HPE</div>
+        <div class="logo"><img src="D:\Carpeta para Visual Studio Code\InovaccionMeetUp\fotos\Hewlett_Packard_Enterprise_logo.svg.png" alt="HPE Logo"></div>
         <nav>
             <ul>
-                <li><a href="#">Productos</a></li>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">HPE GreenLake</a></li>
                 <li><a href="#">Soluciones</a></li>
-                <li><a href="#">Servicios y Soporte</a></li>
-                <li><a href="#">Comunidad</a></li>
-                <li><a href="#">Tienda</a></li>
+                <li><a href="#">Productos</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Aprende</a></li>
+                <li><a href="#">Soporte</a></li>
                 <li><a href="#">Contacto</a></li>
             </ul>
         </nav>
+        <div class="user-login">
+            <img src="D:\Carpeta para Visual Studio Code\InovaccionMeetUp\fotos\60f6f6510bbb672be308337967d7a393.png" alt="Usuario 1">
+            <img src="D:\Carpeta para Visual Studio Code\InovaccionMeetUp\fotos\bolsa.png" alt="Usuario 2">
+            <img src="D:\Carpeta para Visual Studio Code\InovaccionMeetUp\fotos\cuadrado.png" alt="Usuario 3">
+            <img src="D:\Carpeta para Visual Studio Code\InovaccionMeetUp\fotos\internet.png" alt="Usuario 4">
+            <button class="btn-login">Iniciar Sesión</button>
+        </div>
     </header>
     <!-- Contenido de la página -->
 </body>
