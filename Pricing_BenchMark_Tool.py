@@ -1,5 +1,8 @@
 import requests
+import sys
 from bs4 import BeautifulSoup
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 baseurl_1 = "https://www.cyberpuerta.mx/"
 
@@ -39,8 +42,41 @@ for x in range(1, 7):
 # Eliminar duplicados
 all_productlinks = list(set(all_productlinks))
 
-# Imprimir los enlaces filtrados
-for link in all_productlinks:
-    print(link)
+# testLink = 'https://www.cyberpuerta.mx/Computo-Hardware/Servidores/Servidores/Servidor-Lenovo-ThinkSystem-ST50-V2-3-2GHz-Intel-Xeon-E-2356G-16GB-DDR4-4TB-SATA-III-Torre-no-Sistema-Operativo-Instalado.html'
 
-print(len(all_productlinks))
+for link in all_productlinks:
+
+    r = requests.get(link, headers=headers)
+
+    soup = BeautifulSoup(r.content, 'lxml')
+
+    name = soup.find('h1', class_='detailsInfo_right_title').text.strip()
+
+    try:
+        stock = soup.find('span', class_='stockFlag').text.strip()
+        stock = ''.join(filter(str.isdigit, stock))
+        stockOutput = f"{stock} pzas."
+    except:
+        stockOutput = 'No stock'
+
+    price = soup.find('span', class_='priceText').text.strip()
+
+    characteristics = soup.find(
+        'div', class_='detailsInfo_right_more_attribute').text.strip()
+    characteristics = characteristics.replace(
+        'Ver especificaciones completas', '').strip()
+    # Busca la posición donde termina la parte de "Sistema operativo"
+    end_index = characteristics.find(
+        'Sistema operativo:') + len('Sistema operativo:')
+    # Obtén la parte de la cadena antes de "Sistema operativo" y elimina espacios extra al final
+    characteristics = characteristics[:end_index].strip()
+    characteristics = characteristics.replace('\n', ' ')
+
+    data = {
+        'Product': name,
+        'Stock': stockOutput,
+        'Specifications': characteristics,
+        'Price': price
+    }
+
+    print(data)
