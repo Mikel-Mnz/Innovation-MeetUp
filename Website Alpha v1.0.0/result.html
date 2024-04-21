@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scraped Data</title>
+  </head>
+  <body>
+    <h1>Scraped Data</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Rating</th>
+          <th>URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+        <tr>
+          <td>{{ item.Product }}</td>
+          <td>{{ item.Price }}</td>
+          <td>{{ item.Stock }}</td>
+          <td>{{ item.Rating }}</td>
+          <td><a href="{{ item.URL }}" target="_blank">{{ item.URL }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
