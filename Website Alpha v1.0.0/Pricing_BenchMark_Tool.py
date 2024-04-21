@@ -1,26 +1,26 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import requests
-import sys
 import pandas as pd
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
+# Variable global para almacenar los datos raspados
+dataList = []
+
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('home.html')
 
 
 @app.route('/scrape', methods=['POST'])
 def scrape():
+    global dataList
     baseurl_1 = "https://www.cyberpuerta.mx/"
-
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
     }
-
-    # Inicializar una lista para almacenar todos los enlaces
     all_productlinks = []
 
     for x in range(1, 7):
@@ -46,10 +46,8 @@ def scrape():
                 if link['href'].startswith('https://www.cyberpuerta.mx/Computo-Hardware/Servidores/Servidores/'):
                     productlinks.append(link['href'])
 
-        # Agregar los enlaces de la página actual a la lista de todos los enlaces
         all_productlinks.extend(productlinks)
 
-    # Eliminar duplicados
     all_productlinks = list(set(all_productlinks))
 
     dataList = []
@@ -62,7 +60,6 @@ def scrape():
         nameElement = soup.find('h1', class_='detailsInfo_right_title')
         for strong_tag in nameElement.find_all('strong'):
             strong_tag.decompose()
-        # Obtener solo el texto dentro de <h1>
         name = nameElement.text.strip()
 
         try:
@@ -79,25 +76,28 @@ def scrape():
 
         price = soup.find('span', class_='priceText').text.strip()
 
-        # Agregar el URL al diccionario
         data = {
             'Product': name,
             'Price': price,
             'Stock': stockOutput,
             'Rating': rating,
-            'URL': link  # Agregar el URL aquí
+            'URL': link
         }
 
         dataList.append(data)
         print('Saving: ', data['Product'])
 
+    return render_template('result.html', data=dataList)
+
+
+@app.route('/download', methods=['POST'])
+def download():
+    global dataList
     # Convertir la lista de diccionarios en un DataFrame
     df = pd.DataFrame(dataList)
-
-    # Guardar el DataFrame en un archivo Excel
+    # Escribir el DataFrame en un archivo Excel
     df.to_excel('servidores.xlsx', index=False)
-
-    return render_template('result.html', data=dataList)
+    return send_file('servidores.xlsx', as_attachment=True)
 
 
 if __name__ == '__main__':

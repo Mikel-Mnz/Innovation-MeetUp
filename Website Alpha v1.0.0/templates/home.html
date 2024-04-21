@@ -1,0 +1,41 @@
+{% extends "index.html" %} {% block content %}
+
+<style>
+  /* Establecer el fondo del jumbotron a blanco */
+  .jumbotron {
+    background-color: #fff;
+    padding: 3rem; /* Aumentar el espacio alrededor del contenido */
+  }
+
+  /* Ajustar el tamaño de la fuente del título */
+  .jumbotron h1 {
+    font-size: 3.5rem; /* Tamaño de la fuente más grande */
+  }
+
+  /* Ajustar el tamaño de la fuente del texto principal */
+  .jumbotron p.lead {
+    font-size: 1.5rem; /* Tamaño de la fuente más grande */
+  }
+
+  /* Ajustar el tamaño de la fuente del botón */
+  .jumbotron a.btn {
+    font-size: 1.25rem; /* Tamaño de la fuente más grande */
+  }
+</style>
+
+<div class="jumbotron">
+  <h1 class="display-4">Pricing BenchMark Tool</h1>
+  <p class="lead">
+    This is a simple hero unit, a simple jumbotron-style component for calling
+    extra attention to featured content or information.
+  </p>
+  <hr class="my-4" />
+  <p>
+    It uses utility classes for typography and spacing to space content out
+    within the larger container.
+  </p>
+  <form action="/scrape" method="post">
+    <button type="submit" class="btn btn-primary btn-lg">Scrape Data</button>
+  </form>
+</div>
+{% endblock %}
