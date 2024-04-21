@@ -14,9 +14,6 @@ headers = {
 # Inicializar una lista para almacenar todos los enlaces
 all_productlinks = []
 
-# Variable para almacenar el máximo número de especificaciones encontrado
-max_specifications = 0
-
 for x in range(1, 7):
     r = requests.get(
         f'https://www.cyberpuerta.mx/Computo-Hardware/Servidores/Servidores/{x}')
@@ -43,21 +40,10 @@ for x in range(1, 7):
     # Agregar los enlaces de la página actual a la lista de todos los enlaces
     all_productlinks.extend(productlinks)
 
-    # Actualizar max_specifications si se encuentra un nuevo máximo
-    for link in productlinks:
-        r = requests.get(link, headers=headers)
-        soup = BeautifulSoup(r.content, 'lxml')
-        characteristics = soup.find(
-            'div', class_='detailsInfo_right_more_attribute').text.strip()
-        characteristics = characteristics.replace(
-            'Ver especificaciones completas', '').strip()
-        # Split the characteristics into a list of individual items
-        characteristics_list = [c.strip()
-                                for c in characteristics.split('\n') if c.strip()]
-        max_specifications = max(max_specifications, len(characteristics_list))
-
 # Eliminar duplicados
 all_productlinks = list(set(all_productlinks))
+
+# testLink = 'https://www.cyberpuerta.mx/Computo-Hardware/Servidores/Servidores/Servidor-Lenovo-ThinkSystem-ST50-V2-3-2GHz-Intel-Xeon-E-2356G-16GB-DDR4-4TB-SATA-III-Torre-no-Sistema-Operativo-Instalado.html'
 
 dataList = []
 for link in all_productlinks:
@@ -66,7 +52,16 @@ for link in all_productlinks:
 
     soup = BeautifulSoup(r.content, 'lxml')
 
-    name = soup.find('h1', class_='detailsInfo_right_title').text.strip()
+    nameElement = soup.find('h1', class_='detailsInfo_right_title')
+    for strong_tag in nameElement.find_all('strong'):
+        strong_tag.decompose()
+    # Obtener solo el texto dentro de <h1>
+    name = nameElement.text.strip()
+
+    try:
+        rating = soup.find('div', class_='desc').text.strip()
+    except:
+        rating = 'No rating'
 
     try:
         stock = soup.find('span', class_='stockFlag').text.strip()
@@ -77,25 +72,12 @@ for link in all_productlinks:
 
     price = soup.find('span', class_='priceText').text.strip()
 
-    characteristics = soup.find(
-        'div', class_='detailsInfo_right_more_attribute').text.strip()
-    characteristics = characteristics.replace(
-        'Ver especificaciones completas', '').strip()
-
-    # Split the characteristics into a list of individual items
-    characteristics_list = [c.strip()
-                            for c in characteristics.split('\n') if c.strip()]
-
-    # Pad the characteristics list with empty strings to match the maximum number of specifications
-    characteristics_list += [''] * \
-        (max_specifications - len(characteristics_list))
-
     # Agregar el URL al diccionario
     data = {
         'Product': name,
-        'Stock': stockOutput,
-        'Specifications': "\n".join(characteristics_list),
         'Price': price,
+        'Stock': stockOutput,
+        'Rating': rating,
         'URL': link  # Agregar el URL aquí
     }
 
@@ -105,7 +87,5 @@ for link in all_productlinks:
 # Convertir la lista de diccionarios en un DataFrame
 df = pd.DataFrame(dataList)
 
-# Escribir el DataFrame en un archivo CSV
-df.to_csv('servidores.csv', index=False)
-
-print('Datos guardados en servidores.csv exitosamente.')
+# Escribir el DataFrame en un archivo Excel
+df.to_excel('servidores.xlsx', index=False)
