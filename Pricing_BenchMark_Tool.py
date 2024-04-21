@@ -1,5 +1,6 @@
 import requests
 import sys
+import pandas as pd
 from bs4 import BeautifulSoup
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -12,6 +13,9 @@ headers = {
 
 # Inicializar una lista para almacenar todos los enlaces
 all_productlinks = []
+
+# Variable para almacenar el máximo número de especificaciones encontrado
+max_specifications = 0
 
 for x in range(1, 7):
     r = requests.get(
@@ -39,11 +43,23 @@ for x in range(1, 7):
     # Agregar los enlaces de la página actual a la lista de todos los enlaces
     all_productlinks.extend(productlinks)
 
+    # Actualizar max_specifications si se encuentra un nuevo máximo
+    for link in productlinks:
+        r = requests.get(link, headers=headers)
+        soup = BeautifulSoup(r.content, 'lxml')
+        characteristics = soup.find(
+            'div', class_='detailsInfo_right_more_attribute').text.strip()
+        characteristics = characteristics.replace(
+            'Ver especificaciones completas', '').strip()
+        # Split the characteristics into a list of individual items
+        characteristics_list = [c.strip()
+                                for c in characteristics.split('\n') if c.strip()]
+        max_specifications = max(max_specifications, len(characteristics_list))
+
 # Eliminar duplicados
 all_productlinks = list(set(all_productlinks))
 
-# testLink = 'https://www.cyberpuerta.mx/Computo-Hardware/Servidores/Servidores/Servidor-Lenovo-ThinkSystem-ST50-V2-3-2GHz-Intel-Xeon-E-2356G-16GB-DDR4-4TB-SATA-III-Torre-no-Sistema-Operativo-Instalado.html'
-
+dataList = []
 for link in all_productlinks:
 
     r = requests.get(link, headers=headers)
@@ -65,18 +81,31 @@ for link in all_productlinks:
         'div', class_='detailsInfo_right_more_attribute').text.strip()
     characteristics = characteristics.replace(
         'Ver especificaciones completas', '').strip()
-    # Busca la posición donde termina la parte de "Sistema operativo"
-    end_index = characteristics.find(
-        'Sistema operativo:') + len('Sistema operativo:')
-    # Obtén la parte de la cadena antes de "Sistema operativo" y elimina espacios extra al final
-    characteristics = characteristics[:end_index].strip()
-    characteristics = characteristics.replace('\n', ' ')
 
+    # Split the characteristics into a list of individual items
+    characteristics_list = [c.strip()
+                            for c in characteristics.split('\n') if c.strip()]
+
+    # Pad the characteristics list with empty strings to match the maximum number of specifications
+    characteristics_list += [''] * \
+        (max_specifications - len(characteristics_list))
+
+    # Agregar el URL al diccionario
     data = {
         'Product': name,
         'Stock': stockOutput,
-        'Specifications': characteristics,
-        'Price': price
+        'Specifications': "\n".join(characteristics_list),
+        'Price': price,
+        'URL': link  # Agregar el URL aquí
     }
 
-    print(data)
+    dataList.append(data)
+    print('Saving: ', data['Product'])
+
+# Convertir la lista de diccionarios en un DataFrame
+df = pd.DataFrame(dataList)
+
+# Escribir el DataFrame en un archivo CSV
+df.to_csv('servidores.csv', index=False)
+
+print('Datos guardados en servidores.csv exitosamente.')
