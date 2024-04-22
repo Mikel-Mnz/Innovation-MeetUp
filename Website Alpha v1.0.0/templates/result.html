@@ -1,38 +1,54 @@
-{% extends "index.html" %} {% block content %}
+{% extends "index.html" %}
+{% block content %}
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scraped Data</title>
-  </head>
-  <body>
-    <h1>Scraped Data</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Rating</th>
-          <th>URL</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in data %}
-        <tr>
-          <td>{{ item.Product }}</td>
-          <td>{{ item.Price }}</td>
-          <td>{{ item.Stock }}</td>
-          <td>{{ item.Rating }}</td>
-          <td><a href="{{ item.URL }}" target="_blank">{{ item.URL }}</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <form action="/download" method="post">
-      <input type="hidden" name="filename" value="servidores.xlsx" />
-      <button type="submit">Download Excel</button>
-    </form>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scraped Data</title>
+  <style>
+    /* Cambiar el color del texto a blanco */
+    h1 {
+      color: white;
+    }
+    /* Agregar espacio entre la tabla y el botón */
+    table {
+      margin-bottom: 20px;
+    }
+    /* Cambiar el color del botón */
+    button {
+      background-color: rgba(0, 34, 36, 1);
+    }
+  </style>
+</head>
+<body>
+  <h1>Scraped Data</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Rating</th>
+        <th>URL</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in data %}
+      <tr>
+        <td>{{ item.Product }}</td>
+        <td>{{ item.Price }}</td>
+        <td>{{ item.Stock }}</td>
+        <td>{{ item.Rating }}</td>
+        <td><a href="{{ item.URL }}" target="_blank">{{ item.URL }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <form action="/download" method="post">
+    <input type="hidden" name="filename" value="servidores.xlsx" />
+    <!-- Cambiar el diseño del botón -->
+    <button type="submit" class="btn btn-primary btn-lg">Download Excel</button>
+  </form>
+</body>
 </html>
 {% endblock %}
